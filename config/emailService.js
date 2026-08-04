@@ -1,22 +1,9 @@
-const nodemailer = require("nodemailer");
-
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  family: 4, // IPv4 force karo, IPv6 issue avoid karne ke liye
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  connectionTimeout: 30000,
-  greetingTimeout: 30000,
-  socketTimeout: 30000,
-});
+const { Resend } = require("resend");
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendOTPEmail = async (toEmail, otp) => {
-  await transporter.sendMail({
-    from: process.env.EMAIL_USER,
+  await resend.emails.send({
+    from: "NetAyush <onboarding@resend.dev>",
     to: toEmail,
     subject: "NetAyush - Verify Your Email",
     html: `<h2>Your OTP is: ${otp}</h2><p>This OTP expires in 10 minutes.</p>`,
@@ -24,11 +11,11 @@ const sendOTPEmail = async (toEmail, otp) => {
 };
 
 const sendResetPasswordEmail = async (toEmail, otp) => {
-  await transporter.sendMail({
-    from: process.env.EMAIL_USER,
+  await resend.emails.send({
+    from: "NetAyush <onboarding@resend.dev>",
     to: toEmail,
     subject: "NetAyush - Reset Your Password",
-    html: `<h2>Your password reset OTP is: ${otp}</h2><p>This OTP expires in 10 minutes. If you didn't request this, ignore this email.</p>`,
+    html: `<h2>Your password reset OTP is: ${otp}</h2><p>This OTP expires in 10 minutes.</p>`,
   });
 };
 
