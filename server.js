@@ -56,3 +56,4 @@ app.use("/api/appointments", appointmentRoutes);
 
 const adminRoutes = require("./routes/adminRoutes");
 app.use("/api/admin", adminRoutes);
+app.use(cors({ origin: "*" }));
