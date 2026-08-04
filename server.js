@@ -1,6 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const prisma = require("./config/prismaClient");
 
 dotenv.config();
 
@@ -8,11 +9,7 @@ const app = express();
 
 app.use(express.json());
 
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-  }),
-);
+app.use(cors({ origin: "*" }));
 
 app.get("/", (req, res) => {
   res.send("NetAyush backend is running!");
@@ -21,12 +18,14 @@ app.get("/", (req, res) => {
 const authRoutes = require("./routes/authRoutes");
 app.use("/api/auth", authRoutes);
 
-const PORT = process.env.PORT || 5000;
+const doctorRoutes = require("./routes/doctorRoutes");
+app.use("/api/doctors", doctorRoutes);
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server running on port ${PORT}`);
-});
-const prisma = require("./config/prismaClient");
+const appointmentRoutes = require("./routes/appointmentRoutes");
+app.use("/api/appointments", appointmentRoutes);
+
+const adminRoutes = require("./routes/adminRoutes");
+app.use("/api/admin", adminRoutes);
 
 // Har 5 minute mein check karo, unverified aur expired OTP wale users delete karo
 setInterval(
@@ -46,14 +45,10 @@ setInterval(
     }
   },
   5 * 60 * 1000,
-); // 5 minute
+);
 
-const doctorRoutes = require("./routes/doctorRoutes");
-app.use("/api/doctors", doctorRoutes);
+const PORT = process.env.PORT || 5000;
 
-const appointmentRoutes = require("./routes/appointmentRoutes");
-app.use("/api/appointments", appointmentRoutes);
-
-const adminRoutes = require("./routes/adminRoutes");
-app.use("/api/admin", adminRoutes);
-app.use(cors({ origin: "*" }));
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
+});
