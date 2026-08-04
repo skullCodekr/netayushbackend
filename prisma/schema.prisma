@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url= env("DATABASE_URL")
+}
+model User {
+  id          Int      @id @default(autoincrement())
+  name        String
+  email       String   @unique
+  password    String
+  role        String   @default("customer")
+  isVerified  Boolean  @default(false)
+  otp         String?
+  otpExpiry   DateTime?
+  createdAt   DateTime @default(now())
+  doctor      Doctor?
+  appointments Appointment[] @relation("CustomerAppointments")
+}
+model Doctor {
+  id             Int      @id @default(autoincrement())
+  userId         Int      @unique
+  user           User     @relation(fields: [userId], references: [id])
+  specialization String
+  qualification  String
+  experience     Int
+  status         String   @default("pending")
+  createdAt      DateTime @default(now())
+  appointments Appointment[]
+
+}
+model Appointment {
+  id          Int      @id @default(autoincrement())
+  customerId  Int
+  customer    User     @relation("CustomerAppointments", fields: [customerId], references: [id])
+  doctorId    Int
+  doctor      Doctor   @relation(fields: [doctorId], references: [id])
+  slot        String
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+}
