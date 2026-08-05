@@ -1,22 +1,39 @@
-const { Resend } = require("resend");
-const resend = new Resend(process.env.RESEND_API_KEY);
+const axios = require("axios");
 
 const sendOTPEmail = async (toEmail, otp) => {
-  await resend.emails.send({
-    from: "NetAyush <onboarding@resend.dev>",
-    to: toEmail,
-    subject: "NetAyush - Verify Your Email",
-    html: `<h2>Your OTP is: ${otp}</h2><p>This OTP expires in 10 minutes.</p>`,
-  });
+  await axios.post(
+    "https://api.brevo.com/v3/smtp/email",
+    {
+      sender: { email: "vaibhavper001@gmail.com", name: "NetAyush" },
+      to: [{ email: toEmail }],
+      subject: "NetAyush - Verify Your Email",
+      htmlContent: `<h2>Your OTP is: ${otp}</h2><p>This OTP expires in 10 minutes.</p>`,
+    },
+    {
+      headers: {
+        "api-key": process.env.BREVO_API_KEY,
+        "Content-Type": "application/json",
+      },
+    },
+  );
 };
 
 const sendResetPasswordEmail = async (toEmail, otp) => {
-  await resend.emails.send({
-    from: "NetAyush <onboarding@resend.dev>",
-    to: toEmail,
-    subject: "NetAyush - Reset Your Password",
-    html: `<h2>Your password reset OTP is: ${otp}</h2><p>This OTP expires in 10 minutes.</p>`,
-  });
+  await axios.post(
+    "https://api.brevo.com/v3/smtp/email",
+    {
+      sender: { email: "vaibhavper001@gmail.com", name: "NetAyush" },
+      to: [{ email: toEmail }],
+      subject: "NetAyush - Reset Your Password",
+      htmlContent: `<h2>Your password reset OTP is: ${otp}</h2><p>This OTP expires in 10 minutes.</p>`,
+    },
+    {
+      headers: {
+        "api-key": process.env.BREVO_API_KEY,
+        "Content-Type": "application/json",
+      },
+    },
+  );
 };
 
 module.exports = { sendOTPEmail, sendResetPasswordEmail };
